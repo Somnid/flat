@@ -2,12 +2,12 @@ var Flat = (function(){
   function parse(flatText){
     var items = flatText.split("\n\n");
     var itemsArr = [];
-    for(var i = 0; i < flatText.length; i++){
-      var item = flatText[i];
+    for(var i = 0; i < items.length; i++){
+      var itemText = items[i];
       var itemObj = {};
-      var keyvals = item.split("\n");
+      var keyvals = itemText.split("\n");
       for(var j = 0; j < keyvals.length; j++){
-        var keyvalSplit = keyvals[i].split(":");
+        var keyvalSplit = keyvals[j].split(":");
         itemObj[keyvalSplit[0]] = getValue(keyvalSplit[1]);
       }
       itemsArr.push(itemObj);
@@ -19,7 +19,7 @@ var Flat = (function(){
     if(text.indexOf(",") != -1){
       var textValues = text.split(",");
       var arr = [];
-      for(var i = 0; i < values.length; i++){
+      for(var i = 0; i < textValues.length; i++){
         arr.push(getValue(textValues[i]))
       }
       return arr;
