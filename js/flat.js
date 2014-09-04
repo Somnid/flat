@@ -3,18 +3,25 @@ var Flat = (function(){
     var items = flatText.split("\n\n");
     var itemsArr = [];
     for(var i = 0; i < items.length; i++){
-      var itemText = items[i];
+      var itemText = items[i].trim();
+      if(!itemText){
+        continue;
+      }
       var itemObj = {};
       var keyvals = itemText.split("\n");
       for(var j = 0; j < keyvals.length; j++){
         var keyvalSplit = keyvals[j].split(":");
-        itemObj[keyvalSplit[0]] = getValue(keyvalSplit[1]);
+        itemObj[keyvalSplit[0].trim()] = getValue(keyvalSplit[1]);
       }
       itemsArr.push(itemObj);
     }
     return itemsArr;
   }
   function getValue(text){
+    //empty
+    if(!text.trim()){
+      return undefined;
+    }
     //array
     if(text.indexOf(",") != -1){
       var textValues = text.split(",");
@@ -34,7 +41,7 @@ var Flat = (function(){
       return parseInt(text);
     }
     //string
-    return text;
+    return text.trim();
   }
   return {
     parse : parse
