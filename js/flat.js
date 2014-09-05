@@ -15,6 +15,9 @@ var Flat = (function(){
       }
       itemsArr.push(itemObj);
     }
+    if(itemsArr.length == 1){
+      return itemsArr[0];
+    }
     return itemsArr;
   }
   function getValue(text){
@@ -22,12 +25,19 @@ var Flat = (function(){
     if(!text.trim()){
       return undefined;
     }
+    //number
+    if(!isNaN(text)){
+      return parseInt(text);
+    }
     //array
     if(text.indexOf(",") != -1){
       var textValues = text.split(",");
       var arr = [];
       for(var i = 0; i < textValues.length; i++){
-        arr.push(getValue(textValues[i]))
+        var value = getValue(textValues[i]);
+        if(value || value === 0){
+          arr.push(value);
+        }
       }
       return arr;
     }
@@ -36,14 +46,42 @@ var Flat = (function(){
     if(date.getTime() === date.getTime()){
       return date;
     }
-    //number
-    if(!isNaN(text)){
-      return parseInt(text);
-    }
     //string
     return text.trim();
   }
+  function toJson(text){
+    return JSON.stringify(parse(text));
+  }
+  function toCsv(flatText, headers){
+    var items = [].concat(parse(flatText));
+    var fields = getFieldList(items);
+    return buildCsv(items, fields);
+  }
+  function getFieldList(items){
+    var fields = [];
+    for(var i = 0; i < items.length; i++){
+      for(var key in items[i]){
+        if(fields.indexOf(key) == -1){
+          fields.push(key);
+        }
+      }
+    }
+    return fields;
+  }
+  function buildCsv(items, fields){
+    var text = "";
+    for(var i = 0; i < items.length; i++){
+      var line = "";
+      for(var j = 0; j < fields.length; j++){
+        line += (items[i][fields[j]] || "") + (j < fields.length -1 ? "," : "");
+      }
+      text += line + (i < items.length -1 ? "\n" : "");
+    }
+    return text;
+  }
   return {
-    parse : parse
+    parse : parse,
+    toJson : toJson,
+    toCsv : toCsv
   };
 })();
