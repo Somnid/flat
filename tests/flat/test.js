@@ -123,11 +123,15 @@ test("Flat field will ignore whitespace inbetween array values", function(){
   var value = Flat.parse("name:object\narray:two, ,three");
   deepEqual(value, { name : "object", array : ["two","three"] });
 });
+
+
 QUnit.module("Flat.toJson");
 test("Flat will transform to JSON", function(){
   var value = Flat.toJson("name:object\narray:two, ,three");
   equal(value, "{\"name\":\"object\",\"array\":[\"two\",\"three\"]}");
 });
+
+
 QUnit.module("Flat.toCsv");
 test("Flat will transform to csv, one", function(){
   var value = Flat.toCsv("name:object\ncolor:red");
@@ -140,4 +144,23 @@ test("Flat will transform to csv, symmetric columns", function(){
 test("Flat will transform to csv, asymmetric columns", function(){
   var value = Flat.toCsv("name:object\ncolor:red\n\nname:object2\nshape:circle");
   equal(value, "object,red,\nobject2,,circle");
+});
+
+
+QUnit.module("Flat.fromObject");
+test("Flat will convert object", function(){
+  var value = Flat.fromObject({ name : "object", color : "red"});
+  equal(value, "name:object\ncolor:red");
+});
+test("Flat will truncate deep object", function(){
+  var value = Flat.fromObject({ name : "object", color : "red", attrs : { key : "value1", key2: "value2"} });
+  equal(value, "name:object\ncolor:red\nattrs:[object Object]");
+});
+test("Flat will convert object with array", function(){
+  var value = Flat.fromObject({ name : "object", color : "red", shape:["triangle","square"]});
+  equal(value, "name:object\ncolor:red\nshape:triangle,square");
+});
+test("Flat will convert array", function(){
+  var value = Flat.fromObject([{ name : "object", color : "red"}, { name: "object2", color : "blue"}]);
+  equal(value, "name:object\ncolor:red\n\nname:object2\ncolor:blue");
 });

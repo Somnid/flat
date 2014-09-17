@@ -79,9 +79,37 @@ var Flat = (function(){
     }
     return text;
   }
+  function fromObject(obj){
+    var flat = "";
+    if(Array.isArray(obj)){
+      for(var i = 0; i < obj.length; i++){
+        flat += objectToFlat(obj[i]) + "\n\n";
+      }
+      flat = flat.substr(0, flat.length - 2);
+    }else{
+      flat = objectToFlat(obj);
+    }
+    return flat;
+  }
+  function objectToFlat(obj){
+    var flat = "";
+    for(key in obj){
+      flat += key + ":" + valueToFlat(obj[key]) + "\n";
+    }
+    flat = flat.substr(0, flat.length - 1);
+    return flat;
+  }
+  function valueToFlat(val){
+    if(Array.isArray(val)){
+      return val.join(",");
+    }else{
+      return val;
+    }
+  }
   return {
     parse : parse,
     toJson : toJson,
-    toCsv : toCsv
+    toCsv : toCsv,
+    fromObject : fromObject
   };
 })();
